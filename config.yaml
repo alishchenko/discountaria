@@ -1,0 +1,50 @@
+env:
+  level: "local" # local, development, production
+
+db:
+  url: "postgres://user:user@localhost:5433/user?sslmode=disable"
+
+http_server:
+  address: "localhost:8004"
+  timeout: 4s # time for reading request and the same for sending response
+  idle_timeout: 60s # lifetime of connection with client
+
+tokens:
+  access_exp: 2h
+  refresh_exp: 2h
+  secret_key:
+
+oauth2_facebook:
+  redirect_url: "http://localhost:8095/r/facebook-auth"
+  client_id:
+  client_secret:
+
+oauth2_google:
+  redirect_url: "http://localhost:8095/r/google-auth"
+  client_id:
+  client_secret:
+
+oauth2_linkedin:
+  redirect_url: "http://localhost:8095/r/linkedin-auth"
+  client_id:
+  client_secret:
+
+oauth2_state:
+  state_secret:
+  state_life: "10m5s"
+
+mime_types:
+  allowed_mime_types:
+    - image/png
+    - image/jpeg
+    - image/jpg
+
+aws:
+  access_key:
+  secret_key:
+  bucket:
+  region:
+  expiration: 1h
+  ssldisable: true
+  force_path_style: true
+
