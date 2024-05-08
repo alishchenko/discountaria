@@ -4,6 +4,7 @@ import (
 	"github.com/alishchenko/discountaria/internal/server/handlers"
 	"github.com/alishchenko/discountaria/internal/server/helpers"
 	"github.com/alishchenko/discountaria/internal/server/middleware"
+	"github.com/go-chi/chi/v5"
 )
 
 func (s *service) router() chi.Router {

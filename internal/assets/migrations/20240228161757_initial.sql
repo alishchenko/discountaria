@@ -68,7 +68,6 @@ CREATE TABLE IF NOT EXISTS offers_usages (
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TYPE IF EXISTS oauth2_account_provider_enum;
 
 DROP TABLE IF EXISTS users_offers;
 DROP TABLE IF EXISTS offers_usages;
@@ -77,4 +76,6 @@ DROP TABLE IF EXISTS offers;
 DROP TABLE IF EXISTS companies;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS nonces;
+
+DROP TYPE IF EXISTS oauth2_account_provider_enum;
 -- +goose StatementEnd

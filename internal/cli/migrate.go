@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/alishchenko/discountaria/internal/assets"
 	"github.com/alishchenko/discountaria/internal/config"
+	"github.com/pressly/goose/v3"
 )
 
 func MigrateUp(cfg config.Config) error {
