@@ -31,10 +31,12 @@ func CreateCompany(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	id, err := helpers.DB(r).NewCompanies().Insert(data.Company{
-		Name:      request.Name,
-		LogoURL:   request.LogoUrl,
-		UserId:    request.UserId,
-		CreatedAt: time.Now(),
+		Name:        request.Name,
+		LogoURL:     request.LogoUrl,
+		URL:         request.Url,
+		Description: request.Description,
+		UserId:      request.UserId,
+		CreatedAt:   time.Now(),
 	})
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to insert user").Error())

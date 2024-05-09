@@ -11,10 +11,11 @@ import (
 )
 
 type CreateCompanyRequest struct {
-	UserId int64
-	Name   string `json:"name"`
-	// TODO: create image uploader
-	LogoUrl *string `json:"logo_url"`
+	UserId      int64
+	Name        string  `json:"name"`
+	Url         *string `json:"url"`
+	Description *string `json:"description"`
+	LogoUrl     *string `json:"logo_url"`
 }
 
 func NewCreateCompanyRequest(r *http.Request) (*CreateCompanyRequest, error) {

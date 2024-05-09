@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"github.com/Masterminds/squirrel"
 	"github.com/alishchenko/discountaria/internal/data"
+	"github.com/alishchenko/discountaria/internal/server/requests"
 	"github.com/fatih/structs"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
+	"strings"
 )
 
 const (
@@ -56,7 +58,6 @@ func (q *companiesQ) Select() ([]data.Company, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to build query")
 	}
-
 	err = q.database.Select(&res, query, args...)
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -107,8 +108,8 @@ func (q *companiesQ) FilterById(id int64) data.CompaniesQ {
 	return q
 }
 func (q *companiesQ) FilterByName(name string) data.CompaniesQ {
-	q.selector = q.selector.Where(squirrel.Eq{companiesName: name})
-	q.updater = q.updater.Where(squirrel.Eq{companiesName: name})
+	q.selector = q.selector.Where(squirrel.Like{`LOWER(name)`: "%" + strings.ToLower(name) + "%"})
+	q.updater = q.updater.Where(squirrel.Like{`LOWER(name)`: "%" + strings.ToLower(name) + "%"})
 
 	return q
 }
@@ -122,5 +123,22 @@ func (q *companiesQ) UpdateName(name string) data.CompaniesQ {
 func (q *companiesQ) UpdateLogo(url string) data.CompaniesQ {
 	q.updater = q.updater.Set(companiesLogoUrl, url)
 
+	return q
+}
+
+func (q *companiesQ) PageParams(params requests.PaginationParams) data.CompaniesQ {
+	if params.Order == "" {
+		params.Order = "desc"
+	}
+	if params.Limit == 0 {
+		params.Limit = 15
+	}
+	if params.Number == 0 {
+		params.Number = 1
+	}
+	if params.Sort == "" {
+		params.Sort = "companies.id"
+	}
+	q.selector = q.selector.Limit(params.Limit).Offset((params.Number - 1) * params.Limit).OrderBy(fmt.Sprintf("%s %s", params.Sort, params.Order))
 	return q
 }

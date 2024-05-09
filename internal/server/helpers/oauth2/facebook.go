@@ -2,7 +2,6 @@ package oauth2
 
 import (
 	"encoding/json"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/pkg/errors"
 	"golang.org/x/oauth2"
 	"net/http"
@@ -21,6 +20,5 @@ func GetFacebookUserInfo(token *oauth2.Token) (*User, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "Error occurred while getting information from Facebook")
 	}
-	spew.Dump(user)
 	return &user, nil
 }

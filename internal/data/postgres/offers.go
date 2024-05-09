@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"github.com/Masterminds/squirrel"
 	"github.com/alishchenko/discountaria/internal/data"
-	"github.com/fatih/structs"
+	"github.com/alishchenko/discountaria/internal/server/requests"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
+	"strings"
 )
 
 const (
@@ -35,12 +36,13 @@ type offersQ struct {
 func NewOffersQ(db *sqlx.DB) data.OffersQ {
 	return &offersQ{
 		database: db,
-		selector: squirrel.Select(fmt.Sprintf("%s.*", offersTable)).PlaceholderFormat(squirrel.Dollar).
+		selector: squirrel.Select(fmt.Sprintf("%s.*, companies.name as company_name", offersTable)).PlaceholderFormat(squirrel.Dollar).
 			From(offersTable).
+			Join("companies ON companies.id = offers.company_id").
 			Join(fmt.Sprintf("%s ON %s.%s = %s.%s",
 				usersOffersTable, offersTable, offerId,
 				usersOffersTable, usersOffersOfferId)).
-			GroupBy(offerId),
+			GroupBy("offers.id", "companies.id"),
 		updater: squirrel.Update(offersTable),
 	}
 }
@@ -54,7 +56,8 @@ func (q *offersQ) Insert(offer data.Offer) (int64, error) {
 		PlaceholderFormat(squirrel.Dollar).
 		Insert(offersTable).
 		Suffix("returning id").
-		SetMap(structs.Map(&offer))
+		Columns("company_id", "sale", "is_personal", "created_at", "expired_at").
+		Values(offer.CompanyId, offer.Sale, offer.IsPersonal, offer.CreatedAt, offer.ExpiredAt)
 
 	var id int64
 	query, args, _ := stmt.ToSql()
@@ -86,7 +89,6 @@ func (q *offersQ) Select() ([]data.Offer, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to build query")
 	}
-
 	err = q.database.Select(&res, query, args...)
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -188,7 +190,36 @@ func (q *offersQ) UpdatePhoneVerified(isVerified bool) data.OffersQ {
 }
 
 func (q *offersQ) JoinUsers() data.OffersQ {
-	q.selector = q.selector.Join("")
+	q.selector = q.selector.Join("JOIN users ON users.id = users_offers.user_id;")
 
+	return q
+}
+
+func (q *offersQ) JoinCompanies() data.OffersQ {
+	q.selector = q.selector.Join("JOIN cities ON companies.id = offers.company_id;")
+	return q
+}
+
+func (q *offersQ) FilterByCompanyName(name string) data.OffersQ {
+	q.selector = q.selector.Where(squirrel.Like{`LOWER(companies.name)`: "%" + strings.ToLower(name) + "%"})
+	q.updater = q.updater.Where(squirrel.Like{`LOWER(companies.name)`: "%" + strings.ToLower(name) + "%"})
+
+	return q
+}
+
+func (q *offersQ) PageParams(params requests.PaginationParams) data.OffersQ {
+	if params.Order == "" {
+		params.Order = "desc"
+	}
+	if params.Limit == 0 {
+		params.Limit = 15
+	}
+	if params.Number == 0 {
+		params.Number = 1
+	}
+	if params.Sort == "" {
+		params.Sort = "offers.id"
+	}
+	q.selector = q.selector.Limit(params.Limit).Offset((params.Number - 1) * params.Limit).OrderBy(fmt.Sprintf("%s %s", params.Sort, params.Order))
 	return q
 }
