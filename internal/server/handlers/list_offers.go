@@ -18,11 +18,13 @@ func ListOffers(w http.ResponseWriter, r *http.Request) {
 
 	offers, err := query.Select()
 	if err != nil {
-		helpers.Log(r).Error(errors.Wrap(err, "failed to insert offer").Error())
-		render.JSON(w, r, problems.BadRequest(errors.Wrap(err, "failed to insert offer")))
+		helpers.Log(r).Error(errors.Wrap(err, "failed to get list offers").Error())
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, problems.InternalError())
 		return
 	}
 
+	render.Status(r, http.StatusInternalServerError)
 	render.JSON(w, r, offers)
 	return
 }

@@ -17,35 +17,41 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewRegisterUserRequest(r)
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to parse request").Error())
+		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, problems.BadRequest(errors.Wrap(err, "failed to parse request")))
 		return
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to hash password").Error())
+		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, problems.InternalError())
 		return
 	}
 	id, err := helpers.DB(r).NewUsers().Insert(data.User{
-		Name:      request.Name,
-		Email:     request.Email,
-		Password:  string(hashedPassword),
-		CreatedAt: time.Now(),
+		Name:        request.Name,
+		PhoneNumber: request.Phone,
+		Email:       request.Email,
+		Password:    string(hashedPassword),
+		CreatedAt:   time.Now(),
 	})
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to insert user").Error())
-		render.JSON(w, r, problems.BadRequest(errors.Wrap(err, "failed to insert user")))
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, problems.InternalError())
 		return
 	}
 	accessToken, err := helpers.CreateToken(r, id, true)
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to create access token").Error())
+		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, problems.InternalError())
 		return
 	}
 	refreshToken, err := helpers.CreateToken(r, id, false)
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to create refresh token").Error())
+		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, problems.InternalError())
 		return
 	}

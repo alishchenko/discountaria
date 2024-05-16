@@ -16,17 +16,20 @@ func CreateCompany(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewCreateCompanyRequest(r)
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to parse request").Error())
+		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, problems.BadRequest(errors.Wrap(err, "failed to parse request")))
 		return
 	}
 	user, err := helpers.DB(r).NewUsers().FilterById(request.UserId).Get()
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to get user").Error())
-		render.JSON(w, r, problems.BadRequest(errors.Wrap(err, "failed to get user")))
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, problems.InternalError())
 		return
 	}
 	if user == nil {
 		helpers.Log(r).Error("user not found")
+		render.Status(r, http.StatusNotFound)
 		render.JSON(w, r, problems.NotFound())
 		return
 	}
@@ -40,10 +43,12 @@ func CreateCompany(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to insert user").Error())
-		render.JSON(w, r, problems.BadRequest(errors.Wrap(err, "failed to insert user")))
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, problems.InternalError())
 		return
 	}
 
+	render.Status(r, http.StatusCreated)
 	render.JSON(w, r, responses.IdResponse{Id: id})
 	return
 }

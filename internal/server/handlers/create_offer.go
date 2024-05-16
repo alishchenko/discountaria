@@ -16,17 +16,20 @@ func CreateOffer(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewCreateOfferRequest(r)
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to parse request").Error())
+		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, problems.BadRequest(errors.Wrap(err, "failed to parse request")))
 		return
 	}
 	company, err := helpers.DB(r).NewCompanies().FilterById(request.CompanyId).Get()
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to get company").Error())
+		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, problems.InternalError())
 		return
 	}
 	if company == nil {
 		helpers.Log(r).Error("company not found")
+		render.Status(r, http.StatusNotFound)
 		render.JSON(w, r, problems.NotFound())
 		return
 	}
@@ -39,22 +42,26 @@ func CreateOffer(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to insert offer").Error())
-		render.JSON(w, r, problems.BadRequest(errors.Wrap(err, "failed to insert offer")))
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, problems.InternalError())
 		return
 	}
 	if len(request.Users) > 0 {
 		users, err := helpers.DB(r).NewUsers().FilterByEmail(request.Users...).Select()
 		if err != nil {
 			helpers.Log(r).Error(errors.Wrap(err, "failed to get user").Error())
-			render.JSON(w, r, problems.BadRequest(errors.Wrap(err, "failed to ger user")))
+			render.Status(r, http.StatusInternalServerError)
+			render.JSON(w, r, problems.InternalError())
 			return
 		}
 		if err = helpers.DB(r).NewOffers().InsertUsers(id, users...); err != nil {
 			helpers.Log(r).Error(errors.Wrap(err, "failed to insert users").Error())
-			render.JSON(w, r, problems.BadRequest(errors.Wrap(err, "failed to insert users")))
+			render.Status(r, http.StatusInternalServerError)
+			render.JSON(w, r, problems.InternalError())
 			return
 		}
 	}
+	render.Status(r, http.StatusCreated)
 	render.JSON(w, r, responses.IdResponse{Id: id})
 	return
 }

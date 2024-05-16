@@ -12,11 +12,13 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 	//TODO: add filters
 	users, err := helpers.DB(r).NewUsers().Select()
 	if err != nil {
-		helpers.Log(r).Error(errors.Wrap(err, "failed to insert user").Error())
-		render.JSON(w, r, problems.BadRequest(errors.Wrap(err, "failed to insert user")))
+		helpers.Log(r).Error(errors.Wrap(err, "failed to get list users").Error())
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, problems.InternalError())
 		return
 	}
 
+	render.Status(r, http.StatusInternalServerError)
 	render.JSON(w, r, users)
 	return
 }

@@ -8,9 +8,10 @@ import (
 )
 
 type RegisterUserRequest struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name     string  `json:"name"`
+	Email    string  `json:"email"`
+	Phone    *string `json:"phone"`
+	Password string  `json:"password"`
 }
 
 func NewRegisterUserRequest(r *http.Request) (*RegisterUserRequest, error) {

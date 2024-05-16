@@ -14,17 +14,20 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewUpdateUserRequest(r)
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to parse request").Error())
+		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, problems.BadRequest(errors.Wrap(err, "failed to parse request")))
 		return
 	}
 	user, err := helpers.DB(r).NewUsers().FilterById(request.Id).Get()
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to get user").Error())
-		render.JSON(w, r, problems.BadRequest(errors.Wrap(err, "failed to get user")))
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, problems.InternalError())
 		return
 	}
 	if user == nil {
 		helpers.Log(r).Error("user not found")
+		render.Status(r, http.StatusNotFound)
 		render.JSON(w, r, problems.NotFound())
 		return
 	}
@@ -33,17 +36,20 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	if user.Oauth2AccountProvider == nil && request.Password != nil {
 		if request.OldPassword == nil {
 			helpers.Log(r).Error("old password is required")
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, problems.BadRequest(errors.New("old password is required")))
 			return
 		}
 		if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(*request.OldPassword)); err != nil {
 			helpers.Log(r).Error("invalid password")
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, problems.BadRequest(errors.New("invalid password")))
 			return
 		}
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(*request.Password), bcrypt.DefaultCost)
 		if err != nil {
 			helpers.Log(r).Error(errors.Wrap(err, "failed to hash password").Error())
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, problems.InternalError())
 			return
 		}
@@ -64,7 +70,8 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err = query.Update(); err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to update user").Error())
-		render.JSON(w, r, problems.BadRequest(errors.Wrap(err, "failed to update user")))
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, problems.InternalError())
 		return
 	}
 

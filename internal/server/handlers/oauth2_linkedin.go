@@ -17,6 +17,7 @@ func OAuth2Linkedin(w http.ResponseWriter, r *http.Request) {
 	state, err := oauth2.GenerateToken(helpers.OAuth2StateConfig(r).StateSecret)
 	if err != nil {
 		log.Error(errors.Wrap(err, "failed to generate oauth2 state").Error())
+		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, problems.InternalError())
 		return
 	}
@@ -27,6 +28,7 @@ func OAuth2Linkedin(w http.ResponseWriter, r *http.Request) {
 		ValidTill: &validTill,
 	}); err != nil {
 		log.Error(err.Error())
+		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, problems.InternalError())
 		return
 	}
