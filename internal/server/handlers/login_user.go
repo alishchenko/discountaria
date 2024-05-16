@@ -29,6 +29,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	}
 	if user == nil {
 		helpers.Log(r).Error("user not found")
+		render.Status(r, http.StatusNotFound)
 		render.JSON(w, r, problems.NotFound())
 		return
 	}
