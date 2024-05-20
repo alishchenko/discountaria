@@ -56,6 +56,7 @@ func (s *service) router() chi.Router {
 	})
 	r.Route("/photo", func(r chi.Router) {
 		r.Post("/", handlers.UploadPhoto)
+		r.Delete("/", handlers.DeleteFile)
 	})
 	r.Route("/offers", func(r chi.Router) {
 		r.Get("/", handlers.ListOffers)

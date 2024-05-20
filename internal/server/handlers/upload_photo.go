@@ -49,5 +49,5 @@ func UploadPhoto(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	render.JSON(w, r, responses.IdResponseString{Id: key})
+	render.JSON(w, r, responses.OAuth2Response{Url: "https://" + awsConfig.Bucket + ".s3.amazonaws.com/" + key})
 }
