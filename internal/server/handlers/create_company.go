@@ -40,6 +40,7 @@ func CreateCompany(w http.ResponseWriter, r *http.Request) {
 		Description: request.Description,
 		UserId:      request.UserId,
 		CreatedAt:   time.Now(),
+		Category:    request.Category,
 	})
 	if err != nil {
 		helpers.Log(r).Error(errors.Wrap(err, "failed to insert user").Error())

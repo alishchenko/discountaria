@@ -13,6 +13,7 @@ import (
 type CreateCompanyRequest struct {
 	UserId      int64
 	Name        string  `json:"name"`
+	Category    string  `json:"category"`
 	Url         *string `json:"url"`
 	Description *string `json:"description"`
 	LogoUrl     *string `json:"logo_url"`
@@ -37,6 +38,10 @@ func (r *CreateCompanyRequest) validate() error {
 	return validation.Errors{
 		"name/": validation.Validate(
 			&r.Name,
+			validation.Required,
+		),
+		"category/": validation.Validate(
+			&r.Category,
 			validation.Required,
 		),
 	}.Filter()

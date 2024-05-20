@@ -14,6 +14,7 @@ type CompaniesQ interface {
 
 	PageParams(params requests.PaginationParams) CompaniesQ
 	FilterById(id int64) CompaniesQ
+	FilterByOwnerId(id int64) CompaniesQ
 	FilterByName(name string) CompaniesQ
 
 	UpdateName(name string) CompaniesQ
@@ -24,6 +25,7 @@ type Company struct {
 	Id          int64     `db:"id" structs:"-" json:"-"`
 	Name        string    `db:"name" json:"name" structs:"name"`
 	Description *string   `db:"description" json:"description" structs:"description"`
+	Category    string    `db:"category" json:"category" structs:"category"`
 	LogoURL     *string   `db:"logo_url" json:"logo_url" structs:"logo_url"`
 	URL         *string   `db:"url" json:"url" structs:"url"`
 	UserId      int64     `db:"user_id" json:"user_id" structs:"user_id"`
