@@ -18,6 +18,8 @@ func (s *service) router() chi.Router {
 		helpers.SetOAuth2FacebookConfig(s.cfg.OAuth2FacebookConfig.ToFacebookOauth2()),
 		helpers.SetOAuth2GoogleConfig(s.cfg.OAuth2GoogleConfig.ToGoogleOauth2()),
 		helpers.SetOAuth2LinkedinConfig(s.cfg.OAuth2LinkedinConfig.ToLinkedinOauth2()),
+		helpers.CtxAwsConfig(&s.cfg.AWSConfig),
+		helpers.CtxMimeTypes(&s.cfg.MimeTypes),
 	))
 	r.Route("/users", func(r chi.Router) {
 		r.Post("/register", handlers.RegisterUser)
