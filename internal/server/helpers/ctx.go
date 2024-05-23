@@ -21,6 +21,7 @@ const (
 	oAuth2LinkedinConfigCtxKey ctxKey = iota
 	mimeTypesCtxKey            ctxKey = iota
 	awsCfgKey                  ctxKey = iota
+	oSignatureConfigCtxKey     ctxKey = iota
 )
 
 func CtxLog(entry *slog.Logger) func(context.Context) context.Context {
@@ -91,6 +92,16 @@ func SetOAuth2LinkedinConfig(cfg *oauth2.Config) func(context.Context) context.C
 
 func OAuth2LinkedinConfig(r *http.Request) *oauth2.Config {
 	return r.Context().Value(oAuth2LinkedinConfigCtxKey).(*oauth2.Config)
+}
+
+func SetSignatureConfig(cfg config.Signature) func(context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, oSignatureConfigCtxKey, cfg)
+	}
+}
+
+func SignatureConfig(r *http.Request) config.Signature {
+	return r.Context().Value(oSignatureConfigCtxKey).(config.Signature)
 }
 
 func CtxMimeTypes(entry *config.MimeTypes) func(ctx context.Context) context.Context {

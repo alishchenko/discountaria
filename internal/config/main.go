@@ -19,6 +19,7 @@ type Config struct {
 
 	AWSConfig AWSConfig `yaml:"aws" env-required:"true"`
 	MimeTypes MimeTypes `yaml:"mime_types" env-required:"true"`
+	Signature Signature `yaml:"signature" env-required:"true"`
 }
 
 func MustLoad() Config {

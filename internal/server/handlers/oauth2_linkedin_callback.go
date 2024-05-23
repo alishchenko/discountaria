@@ -49,6 +49,7 @@ func OAuth2LinkedinCallback(w http.ResponseWriter, r *http.Request) {
 			Name:                  user.Name,
 			Email:                 user.Email,
 			Oauth2AccountProvider: &linkedinOAuth2Provider,
+			Password:              generatePassword(12, true, true),
 			CreatedAt:             time.Now(),
 		})
 		if err != nil {

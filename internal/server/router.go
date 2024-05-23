@@ -20,6 +20,7 @@ func (s *service) router() chi.Router {
 		helpers.SetOAuth2LinkedinConfig(s.cfg.OAuth2LinkedinConfig.ToLinkedinOauth2()),
 		helpers.CtxAwsConfig(&s.cfg.AWSConfig),
 		helpers.CtxMimeTypes(&s.cfg.MimeTypes),
+		helpers.SetSignatureConfig(s.cfg.Signature),
 	))
 	r.Route("/users", func(r chi.Router) {
 		r.Post("/register", handlers.RegisterUser)

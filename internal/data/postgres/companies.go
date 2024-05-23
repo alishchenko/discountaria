@@ -29,8 +29,12 @@ type companiesQ struct {
 func NewCompaniesQ(db *sqlx.DB) data.CompaniesQ {
 	return &companiesQ{
 		database: db,
-		selector: squirrel.Select(fmt.Sprintf("%s.*", companiesTable)).PlaceholderFormat(squirrel.Dollar).From(companiesTable),
-		updater:  squirrel.Update(companiesTable),
+		selector: squirrel.Select(fmt.Sprintf("%s.*", companiesTable)).
+			PlaceholderFormat(squirrel.Dollar).
+			From(companiesTable).
+			Join("admins_companies ON companies.id = admins_companies.company_id").
+			GroupBy("companies.id"),
+		updater: squirrel.Update(companiesTable),
 	}
 }
 

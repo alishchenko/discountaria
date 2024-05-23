@@ -49,6 +49,7 @@ func OAuth2FacebookCallback(w http.ResponseWriter, r *http.Request) {
 		id, err = helpers.DB(r).NewUsers().Insert(data.User{
 			Name:                  user.Name,
 			Email:                 user.Email,
+			Password:              generatePassword(12, true, true),
 			Oauth2AccountProvider: &facebookOAuth2Provider,
 			CreatedAt:             time.Now(),
 		})

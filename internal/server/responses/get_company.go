@@ -36,7 +36,8 @@ func ToGetCompanyResponse(company data.Company) CompanyResponse {
 }
 
 func ToListCompanyResponse(r *http.Request, companies []data.Company) CompanyListResponse {
-	var resp CompanyListResponse
+	resp := CompanyListResponse{}
+	resp.Data = []CompanyResponse{}
 	for _, company := range companies {
 		resp.Data = append(resp.Data, ToGetCompanyResponse(company))
 	}

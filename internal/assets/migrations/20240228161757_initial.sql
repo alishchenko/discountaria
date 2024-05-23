@@ -47,6 +47,11 @@ CREATE TABLE IF NOT EXISTS users_offers (
       offer_id INTEGER REFERENCES offers(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS admins_companies (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE
+);
 CREATE TABLE IF NOT EXISTS companies_administrators (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,

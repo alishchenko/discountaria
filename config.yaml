@@ -48,3 +48,8 @@ aws:
   ssldisable: true
   force_path_style: true
 
+signature:
+  n: 4096
+  r: 8
+  p: 1
+  salt: SaLt

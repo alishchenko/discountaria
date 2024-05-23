@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
+	"math/rand"
 	"net/http"
 	"time"
 )
@@ -57,4 +58,24 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 	render.JSON(w, r, responses.AuthTokensResponse{Id: id, AccessToken: accessToken, RefreshToken: refreshToken})
 	return
+}
+
+func generatePassword(length int, includeNumber bool, includeSpecial bool) string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	var password []byte
+	var charSource string
+
+	if includeNumber {
+		charSource += "0123456789"
+	}
+	if includeSpecial {
+		charSource += "!@#$%^&*()_+=-"
+	}
+	charSource += charset
+
+	for i := 0; i < length; i++ {
+		randNum := rand.Intn(len(charSource))
+		password = append(password, charSource[randNum])
+	}
+	return string(password)
 }
