@@ -12,6 +12,6 @@ type ListOffersRequest struct {
 func NewListOffersRequest(r *http.Request) ListOffersRequest {
 	var request ListOffersRequest
 	request.PaginationParams = GetPaginationParams(r)
-	request.CompanyName = r.URL.Query().Get("[filter]company_name")
+	request.CompanyName = r.URL.Query().Get("filter[company_name]")
 	return request
 }
