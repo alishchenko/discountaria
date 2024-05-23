@@ -32,7 +32,7 @@ func NewCompaniesQ(db *sqlx.DB) data.CompaniesQ {
 		selector: squirrel.Select(fmt.Sprintf("%s.*", companiesTable)).
 			PlaceholderFormat(squirrel.Dollar).
 			From(companiesTable).
-			Join("admins_companies ON companies.id = admins_companies.company_id").
+			LeftJoin("admins_companies ON companies.id = admins_companies.company_id").
 			GroupBy("companies.id"),
 		updater: squirrel.Update(companiesTable),
 	}

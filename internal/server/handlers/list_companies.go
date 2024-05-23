@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/alishchenko/discountaria/internal/server/helpers"
 	"github.com/alishchenko/discountaria/internal/server/requests"
 	"github.com/alishchenko/discountaria/internal/server/responses"
@@ -26,7 +27,7 @@ func ListCompanies(w http.ResponseWriter, r *http.Request) {
 		render.JSON(w, r, problems.InternalError())
 		return
 	}
-
+	fmt.Println(companies)
 	render.JSON(w, r, responses.ToListCompanyResponse(r, companies))
 	return
 }
