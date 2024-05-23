@@ -1,7 +1,6 @@
 package requests
 
 import (
-	"fmt"
 	"github.com/spf13/cast"
 	"net/http"
 )
@@ -19,9 +18,7 @@ func NewListCompaniesRequest(r *http.Request) ListCompaniesRequest {
 	if name != "" {
 		request.Name = &name
 	}
-	fmt.Println(r.URL.Query())
 	id := r.URL.Query().Get("filter[owner_id]")
-	fmt.Println(id)
 	if id != "" {
 		idInt := cast.ToInt64(id)
 		request.OwnerId = &idInt

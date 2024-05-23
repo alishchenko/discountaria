@@ -112,14 +112,14 @@ func (q *companiesQ) FilterById(id int64) data.CompaniesQ {
 	return q
 }
 func (q *companiesQ) FilterByOwnerId(id int64) data.CompaniesQ {
-	q.selector = q.selector.Where(squirrel.Eq{"user_id": id})
-	q.updater = q.updater.Where(squirrel.Eq{"user_id": id})
+	q.selector = q.selector.Where(squirrel.Eq{"companies.user_id": id})
+	q.updater = q.updater.Where(squirrel.Eq{"companies.user_id": id})
 
 	return q
 }
 func (q *companiesQ) FilterByName(name string) data.CompaniesQ {
-	q.selector = q.selector.Where(squirrel.Like{`LOWER(name)`: "%" + strings.ToLower(name) + "%"})
-	q.updater = q.updater.Where(squirrel.Like{`LOWER(name)`: "%" + strings.ToLower(name) + "%"})
+	q.selector = q.selector.Where(squirrel.Like{`LOWER(companies.name)`: "%" + strings.ToLower(name) + "%"})
+	q.updater = q.updater.Where(squirrel.Like{`LOWER(companies.name)`: "%" + strings.ToLower(name) + "%"})
 
 	return q
 }
