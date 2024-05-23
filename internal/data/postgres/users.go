@@ -18,7 +18,6 @@ const (
 	userPhotoUrl      = "photo_url"
 	userPhoneNumber   = "phone"
 	userPassword      = "password"
-	userPhoneVerified = "phone_verified"
 	userEmailVerified = "email_verified"
 	userEmail         = "email"
 )
@@ -120,7 +119,6 @@ func (q *usersQ) UpdateEmail(email string) data.UsersQ {
 
 func (q *usersQ) UpdatePhone(phone string) data.UsersQ {
 	q.updater = q.updater.Set(userPhoneNumber, phone)
-	q.updater = q.updater.Set(userPhoneVerified, false)
 
 	return q
 }
@@ -139,12 +137,6 @@ func (q *usersQ) UpdatePassword(password string) data.UsersQ {
 
 func (q *usersQ) UpdatePhotoUrl(url string) data.UsersQ {
 	q.updater = q.updater.Set(userPhotoUrl, url)
-
-	return q
-}
-
-func (q *usersQ) UpdatePhoneVerified(isVerified bool) data.UsersQ {
-	q.updater = q.updater.Set(userPhoneVerified, isVerified)
 
 	return q
 }

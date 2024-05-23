@@ -15,7 +15,6 @@ type UsersQ interface {
 	UpdateEmail(email string) UsersQ
 	UpdatePhone(phone string) UsersQ
 	UpdateEmailVerified(isVerified bool) UsersQ
-	UpdatePhoneVerified(isVerified bool) UsersQ
 	UpdatePassword(password string) UsersQ
 	UpdatePhotoUrl(url string) UsersQ
 }
